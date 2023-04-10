@@ -208,7 +208,7 @@ let producto = [
 ];
 let container = document.getElementById("cards");
 //producto=null; captura de error
-function getProducto() {
+/* function getProducto() {
   return new Promise((resolve, reject) => {
     if (producto == null) {
       reject(new Error("Producto no existe"));
@@ -218,21 +218,46 @@ function getProducto() {
       resolve(producto);
     }, 5000);
   });
+} */
+
+function getProducto(){ //con fetch
+  let promesa = fetch("https://fakestoreapi.com/products",{
+    method:"GET"
+
+  });
+  promesa.then((response)=> {
+      response.json().then((prods)=>{
+          createCards(prods);
+          console.log("prods=>json()");
+          console.log(prods);
+        }
+      )
+      .catch((err)=>{
+        console.log("Error en la respuesta "+err.message);
+      });
+    })
+  
+  .catch((error) =>{
+    console.log("Error en la respuesta "+error.message);
+  });
 }
 
-getProducto()
-  .then((prod) => console.log(prod))
+getProducto();
+ /*  .then((prod) => console.log(prod))
   .catch((err) => console.log(err.message));
+ */
+function createCards(prods){
+  prods.forEach((elem) => {
+    let card = `
+      <div class="card" style="width: 18rem;">
+    <img src="${elem.image}" class="card-img-top" alt="${elem.id}">
+    <div class="card-body">
+      <h5 class="card-title">${elem.title}</h5>
+      <p class="card-text">${elem.description}</p>
+      <a href="#" class="btn btn-primary"> Mas info</a>
+    </div>
+  </div>`;
+    container.insertAdjacentHTML("beforeend", card);
+  });
+}
 
-producto.forEach((elem) => {
-  let card = `
-    <div class="card" style="width: 18rem;">
-  <img src="${elem.image}" class="card-img-top" alt="${elem.id}">
-  <div class="card-body">
-    <h5 class="card-title">${elem.title}</h5>
-    <p class="card-text">${elem.description}</p>
-    <a href="#" class="btn btn-primary"> Mas info</a>
-  </div>
-</div>`;
-  container.insertAdjacentHTML("beforeend", card);
-});
